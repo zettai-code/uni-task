@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { StatusBadge } from './status-badge'
 import { Button } from '@/components/ui/button'
 import { formatDate, formatDateForInput, getDaysUntilDue, getUrgencyLevel } from '@/lib/date-utils'
@@ -103,6 +103,9 @@ export function AssignmentCard({
               {daysLabel}
             </span>
           </div>
+          {assignment.dueDate && daysUntil <= 7 && assignment.status !== AssignmentStatus.COMPLETED && (
+            <CountdownLabel dueDate={assignment.dueDate} />
+          )}
           {isEditingDate && (
             <div className="mt-3 flex items-center gap-2">
               <input
@@ -154,5 +157,41 @@ export function AssignmentCard({
         </div>
       </div>
     </div>
+  )
+}
+
+function getCountdownText(dueDate: string): string {
+  const now = new Date()
+  const due = new Date(dueDate)
+  due.setHours(23, 59, 59, 999)
+  const diffMs = due.getTime() - now.getTime()
+
+  if (diffMs < 0) {
+    const elapsed = Math.abs(diffMs)
+    const days = Math.floor(elapsed / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60))
+    return `締切を ${days}日 ${hours}時間 ${minutes}分 超過`
+  }
+
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+  return `締切まで あと ${days}日 ${hours}時間 ${minutes}分`
+}
+
+function CountdownLabel({ dueDate }: { readonly dueDate: string }) {
+  const [text, setText] = useState(() => getCountdownText(dueDate))
+
+  useEffect(() => {
+    setText(getCountdownText(dueDate))
+    const id = setInterval(() => setText(getCountdownText(dueDate)), 60000)
+    return () => clearInterval(id)
+  }, [dueDate])
+
+  return (
+    <p className="mt-2 text-xs font-bold text-red-600">
+      {text}
+    </p>
   )
 }
