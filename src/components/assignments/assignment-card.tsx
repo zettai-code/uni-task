@@ -19,9 +19,9 @@ interface AssignmentCardProps {
 }
 
 const urgencyStyles = {
-  urgent: 'border-l-red-500',
-  warning: 'border-l-yellow-500',
-  info: 'border-l-blue-500',
+  urgent: 'border-l-gray-300',
+  warning: 'border-l-gray-300',
+  info: 'border-l-gray-300',
   normal: 'border-l-gray-300',
 } as const
 
