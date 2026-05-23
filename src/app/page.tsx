@@ -72,10 +72,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
-        <Button onClick={() => setIsFormOpen(true)}>+ 課題を追加</Button>
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">ダッシュボード</h1>
+        <Button onClick={() => setIsFormOpen(true)} className="shrink-0 text-xs sm:text-sm">+ 課題を追加</Button>
       </div>
 
       <div className="rounded-lg border bg-white p-4 shadow-sm">

@@ -115,7 +115,7 @@ export function CalendarGrid({
             return (
               <div
                 key={i}
-                className={`min-h-[100px] border-b border-r p-1 transition-colors ${
+                className={`min-h-[60px] sm:min-h-[100px] border-b border-r p-0.5 sm:p-1 transition-colors ${
                   day === null
                     ? 'bg-gray-50'
                     : isSelected

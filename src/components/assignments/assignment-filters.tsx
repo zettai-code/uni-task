@@ -37,8 +37,8 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
   }, [filters.category])
 
   return (
-    <div className="flex flex-wrap items-end gap-4">
-      <div className="w-48">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:flex md:flex-wrap md:items-end md:gap-4">
+      <div className="w-full sm:w-auto md:w-48">
         <Select
           label="科目区分"
           options={categoryOptions}
@@ -53,7 +53,7 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
           }
         />
       </div>
-      <div className="w-48">
+      <div className="w-full sm:w-auto md:w-48">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">科目</label>
           <select
@@ -77,7 +77,7 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
           </select>
         </div>
       </div>
-      <div className="w-40">
+      <div className="w-full sm:w-auto md:w-40">
         <Select
           label="ステータス"
           options={statusOptions}
@@ -91,7 +91,7 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
           }
         />
       </div>
-      <div className="w-56">
+      <div className="w-full sm:w-auto md:w-56">
         <Input
           label="検索"
           placeholder="課題名で検索..."
