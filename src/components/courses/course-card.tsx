@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
+import { CATEGORY_CONFIG, DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
 import type { Course } from '@/types/course'
 
 interface CourseCardProps {
@@ -37,6 +37,7 @@ export function CourseCard({ course, assignmentCount, onEdit, onDelete }: Course
         </div>
       </div>
       <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
+        <span>{CATEGORY_CONFIG[course.category]?.label}{course.subject ? ` / ${course.subject}` : ''}</span>
         <span>{DAY_LABELS[course.dayOfWeek]}曜 {PERIOD_LABELS[course.period - 1]}</span>
         <span>課題: {assignmentCount}件</span>
       </div>

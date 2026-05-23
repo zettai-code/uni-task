@@ -26,9 +26,10 @@ export default function DashboardPage() {
   const [filters, setFilters] = useState<AssignmentFilters>({
     courseId: null,
     status: null,
+    category: null,
     searchQuery: '',
   })
-  const filtered = useFilteredAssignments(assignments, filters)
+  const filtered = useFilteredAssignments(assignments, filters, courses)
 
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Assignment | undefined>()

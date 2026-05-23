@@ -10,3 +10,18 @@ export const AssignmentStatus = {
 
 export type AssignmentStatusType =
   (typeof AssignmentStatus)[keyof typeof AssignmentStatus]
+
+export const CourseCategory = {
+  GENERAL: 'general',
+  LANGUAGE: 'language',
+  SPECIALIZED: 'specialized',
+  SEMINAR: 'seminar',
+  LAB: 'lab',
+  SPORTS: 'sports',
+  CERTIFICATION: 'certification',
+  CAREER: 'career',
+  ONLINE_PBL: 'online_pbl',
+} as const
+
+export type CourseCategoryType =
+  (typeof CourseCategory)[keyof typeof CourseCategory]

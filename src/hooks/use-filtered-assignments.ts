@@ -2,10 +2,12 @@
 
 import { useMemo } from 'react'
 import type { Assignment, AssignmentFilters } from '@/types/assignment'
+import type { Course } from '@/types/course'
 
 export function useFilteredAssignments(
   assignments: readonly Assignment[],
-  filters: AssignmentFilters
+  filters: AssignmentFilters,
+  courses: readonly Course[] = []
 ) {
   return useMemo(() => {
     const filtered = assignments.filter((assignment) => {
@@ -14,6 +16,12 @@ export function useFilteredAssignments(
       }
       if (filters.status && assignment.status !== filters.status) {
         return false
+      }
+      if (filters.category) {
+        const course = courses.find((c) => c.id === assignment.courseId)
+        if (!course || course.category !== filters.category) {
+          return false
+        }
       }
       if (
         filters.searchQuery &&
@@ -27,5 +35,5 @@ export function useFilteredAssignments(
     return [...filtered].sort(
       (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
     )
-  }, [assignments, filters])
+  }, [assignments, filters, courses])
 }

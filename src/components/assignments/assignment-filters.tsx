@@ -2,11 +2,11 @@
 
 import { Select } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { AssignmentStatus } from '@/types/common'
-import { STATUS_CONFIG } from '@/lib/constants'
+import { AssignmentStatus, CourseCategory } from '@/types/common'
+import { STATUS_CONFIG, CATEGORY_CONFIG } from '@/lib/constants'
 import type { AssignmentFilters } from '@/types/assignment'
 import type { Course } from '@/types/course'
-import type { AssignmentStatusType, CourseId } from '@/types/common'
+import type { AssignmentStatusType, CourseCategoryType, CourseId } from '@/types/common'
 
 interface AssignmentFiltersProps {
   readonly filters: AssignmentFilters
@@ -25,8 +25,27 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
     label: STATUS_CONFIG[s].label,
   }))
 
+  const categoryOptions = Object.values(CourseCategory).map((c) => ({
+    value: c,
+    label: CATEGORY_CONFIG[c].label,
+  }))
+
   return (
     <div className="flex flex-wrap items-end gap-4">
+      <div className="w-48">
+        <Select
+          label="科目区分"
+          options={categoryOptions}
+          placeholder="すべて"
+          value={filters.category ?? ''}
+          onChange={(e) =>
+            onFilterChange({
+              ...filters,
+              category: e.target.value ? (e.target.value as CourseCategoryType) : null,
+            })
+          }
+        />
+      </div>
       <div className="w-48">
         <Select
           label="授業で絞り込み"

@@ -6,13 +6,15 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
-import { COURSE_COLORS, DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
+import { CATEGORY_CONFIG, CATEGORY_SUBJECTS, GENERAL_SUBJECT_GROUPS, COURSE_COLORS, DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
+import { CourseCategory } from '@/types/common'
+import type { CourseCategoryType } from '@/types/common'
 import type { Course } from '@/types/course'
 
 interface CourseFormProps {
   readonly isOpen: boolean
   readonly onClose: () => void
-  readonly onSubmit: (data: { name: string; instructor: string; color: string; dayOfWeek: number; period: number }) => void
+  readonly onSubmit: (data: { name: string; instructor: string; color: string; category: CourseCategoryType; subject: string; dayOfWeek: number; period: number }) => void
   readonly editTarget?: Course
 }
 
@@ -20,6 +22,8 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
   const [name, setName] = useState(editTarget?.name ?? '')
   const [instructor, setInstructor] = useState(editTarget?.instructor ?? '')
   const [color, setColor] = useState(editTarget?.color ?? COURSE_COLORS[0])
+  const [category, setCategory] = useState<CourseCategoryType>(editTarget?.category ?? CourseCategory.GENERAL)
+  const [subject, setSubject] = useState(editTarget?.subject ?? '')
   const [dayOfWeek, setDayOfWeek] = useState(editTarget?.dayOfWeek ?? 1)
   const [period, setPeriod] = useState(editTarget?.period ?? 1)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -28,7 +32,7 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
     e.preventDefault()
     setErrors({})
 
-    const result = createCourseSchema.safeParse({ name, instructor, color, dayOfWeek, period })
+    const result = createCourseSchema.safeParse({ name, instructor, color, category, subject, dayOfWeek, period })
     if (!result.success) {
       const fieldErrors: Record<string, string> = {}
       for (const issue of result.error.issues) {
@@ -41,7 +45,7 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
       return
     }
 
-    onSubmit({ name, instructor, color, dayOfWeek, period })
+    onSubmit({ name, instructor, color, category, subject, dayOfWeek, period })
     onClose()
   }
 
@@ -72,6 +76,41 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
           error={errors.instructor}
           placeholder="例: 山田太郎"
         />
+        <Select
+          label="科目区分"
+          options={Object.values(CourseCategory).map((c) => ({
+            value: c,
+            label: CATEGORY_CONFIG[c].label,
+          }))}
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value as CourseCategoryType)
+            setSubject('')
+          }}
+          error={errors.category}
+        />
+        {category === 'general' && (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">科目</label>
+            <select
+              className={`rounded-lg border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.subject ? 'border-red-500' : 'border-gray-300'
+              }`}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            >
+              <option value="">科目を選択</option>
+              {GENERAL_SUBJECT_GROUPS.map((group) => (
+                <optgroup key={group.group} label={group.group}>
+                  {group.subjects.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            {errors.subject && <p className="text-xs text-red-500">{errors.subject}</p>}
+          </div>
+        )}
         <div className="flex gap-4">
           <div className="flex-1">
             <Select

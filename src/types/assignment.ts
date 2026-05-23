@@ -17,8 +17,11 @@ export interface Assignment {
   readonly updatedAt: string
 }
 
+import type { CourseCategoryType } from './common'
+
 export interface AssignmentFilters {
   readonly courseId: CourseId | null
   readonly status: AssignmentStatusType | null
+  readonly category: CourseCategoryType | null
   readonly searchQuery: string
 }
