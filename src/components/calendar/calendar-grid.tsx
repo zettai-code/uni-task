@@ -3,25 +3,38 @@
 import { useState } from 'react'
 import { CalendarHeader } from './calendar-header'
 import { CalendarEvent } from './calendar-event'
+import { Button } from '@/components/ui/button'
 import { getDaysInMonth, getFirstDayOfMonth, isSameDay } from '@/lib/date-utils'
 import { DAY_LABELS } from '@/lib/constants'
 import type { Assignment } from '@/types/assignment'
 import type { Course } from '@/types/course'
+import type { AssignmentId } from '@/types/common'
 
 interface CalendarGridProps {
   readonly assignments: readonly Assignment[]
   readonly courses: readonly Course[]
+  readonly onAddAssignment: (dateStr: string) => void
+  readonly onEditAssignment: (assignment: Assignment) => void
+  readonly onDeleteAssignment: (id: AssignmentId) => void
 }
 
-export function CalendarGrid({ assignments, courses }: CalendarGridProps) {
+export function CalendarGrid({
+  assignments,
+  courses,
+  onAddAssignment,
+  onEditAssignment,
+  onDeleteAssignment,
+}: CalendarGridProps) {
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
+  const [selectedDay, setSelectedDay] = useState<number | null>(null)
 
   const daysInMonth = getDaysInMonth(year, month)
   const firstDay = getFirstDayOfMonth(year, month)
 
   const prevMonth = () => {
+    setSelectedDay(null)
     if (month === 0) {
       setYear(year - 1)
       setMonth(11)
@@ -31,6 +44,7 @@ export function CalendarGrid({ assignments, courses }: CalendarGridProps) {
   }
 
   const nextMonth = () => {
+    setSelectedDay(null)
     if (month === 11) {
       setYear(year + 1)
       setMonth(0)
@@ -40,13 +54,25 @@ export function CalendarGrid({ assignments, courses }: CalendarGridProps) {
   }
 
   const goToToday = () => {
+    setSelectedDay(null)
     setYear(today.getFullYear())
     setMonth(today.getMonth())
   }
 
   const getAssignmentsForDate = (day: number) => {
     const date = new Date(year, month, day)
-    return assignments.filter((a) => isSameDay(new Date(a.dueDate), date))
+    return assignments.filter((a) => a.dueDate && isSameDay(new Date(a.dueDate), date))
+  }
+
+  const handleDayClick = (day: number) => {
+    setSelectedDay(selectedDay === day ? null : day)
+  }
+
+  const handleAdd = () => {
+    if (selectedDay === null) return
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`
+    onAddAssignment(dateStr)
+    setSelectedDay(null)
   }
 
   const cells: (number | null)[] = []
@@ -84,17 +110,23 @@ export function CalendarGrid({ assignments, courses }: CalendarGridProps) {
             const isToday = day !== null && isSameDay(new Date(year, month, day), today)
             const dayAssignments = day !== null ? getAssignmentsForDate(day) : []
             const dayOfWeek = i % 7
+            const isSelected = day !== null && selectedDay === day
 
             return (
               <div
                 key={i}
-                className={`min-h-[100px] border-b border-r p-1 ${
-                  day === null ? 'bg-gray-50' : ''
+                className={`min-h-[100px] border-b border-r p-1 transition-colors ${
+                  day === null
+                    ? 'bg-gray-50'
+                    : isSelected
+                      ? 'bg-blue-50 ring-2 ring-inset ring-blue-400'
+                      : 'cursor-pointer hover:bg-gray-50'
                 }`}
+                onClick={() => day !== null && handleDayClick(day)}
               >
                 {day !== null && (
                   <>
-                    <div className="mb-1">
+                    <div className="mb-1 flex items-center justify-between">
                       <span
                         className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-sm ${
                           isToday
@@ -108,16 +140,41 @@ export function CalendarGrid({ assignments, courses }: CalendarGridProps) {
                       >
                         {day}
                       </span>
+                      {isSelected && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleAdd() }}
+                          className="text-[10px] px-1.5 py-0.5 rounded bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                          + 追加
+                        </button>
+                      )}
                     </div>
                     <div className="space-y-0.5">
-                      {dayAssignments.slice(0, 3).map((assignment) => (
-                        <CalendarEvent
-                          key={assignment.id}
-                          assignment={assignment}
-                          course={courses.find((c) => c.id === assignment.courseId)}
-                        />
+                      {dayAssignments.slice(0, isSelected ? 10 : 3).map((assignment) => (
+                        <div key={assignment.id} className="group relative">
+                          <CalendarEvent
+                            assignment={assignment}
+                            course={courses.find((c) => c.id === assignment.courseId)}
+                          />
+                          {isSelected && (
+                            <div className="flex gap-1 mt-0.5">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onEditAssignment(assignment) }}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              >
+                                編集
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onDeleteAssignment(assignment.id) }}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-600 hover:bg-red-100"
+                              >
+                                削除
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       ))}
-                      {dayAssignments.length > 3 && (
+                      {!isSelected && dayAssignments.length > 3 && (
                         <p className="text-xs text-gray-400 px-1">
                           +{dayAssignments.length - 3}件
                         </p>
