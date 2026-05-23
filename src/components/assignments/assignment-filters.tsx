@@ -84,20 +84,6 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
           </select>
         </div>
       </div>
-      <div className="w-48">
-        <Select
-          label="授業で絞り込み"
-          options={courseOptions}
-          placeholder="すべて"
-          value={filters.courseId ?? ''}
-          onChange={(e) =>
-            onFilterChange({
-              ...filters,
-              courseId: e.target.value ? (e.target.value as CourseId) : null,
-            })
-          }
-        />
-      </div>
       <div className="w-40">
         <Select
           label="ステータス"
