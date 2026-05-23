@@ -11,6 +11,7 @@ interface AssignmentListProps {
   readonly onStatusChange: (id: AssignmentId, status: AssignmentStatusType) => void
   readonly onEdit: (assignment: Assignment) => void
   readonly onDelete: (id: AssignmentId) => void
+  readonly onDueDateChange: (id: AssignmentId, dueDate: string) => void
 }
 
 export function AssignmentList({
@@ -19,6 +20,7 @@ export function AssignmentList({
   onStatusChange,
   onEdit,
   onDelete,
+  onDueDateChange,
 }: AssignmentListProps) {
   if (assignments.length === 0) {
     return (
@@ -39,6 +41,7 @@ export function AssignmentList({
           onStatusChange={(status) => onStatusChange(assignment.id, status)}
           onEdit={() => onEdit(assignment)}
           onDelete={() => onDelete(assignment.id)}
+          onDueDateChange={(dueDate) => onDueDateChange(assignment.id, dueDate)}
         />
       ))}
     </div>

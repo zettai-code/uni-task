@@ -70,8 +70,97 @@ export const GENERAL_SUBJECT_GROUPS = [
   },
 ] as const
 
+export const LANGUAGE_SUBJECT_GROUPS = [
+  {
+    group: '英語系',
+    subjects: [
+      '英語', '英会話', 'Academic English', 'English Communication',
+      '英語リーディング', '英語ライティング', '英語リスニング',
+      '英語プレゼンテーション', '英語ディベート',
+      'TOEIC対策', 'TOEFL対策', 'IELTS対策',
+      'ビジネス英語', '医学英語', '科学技術英語', '法律英語',
+      '英語文法', '英語音声学', '英語学', '英米文化', '英文学',
+    ],
+  },
+  {
+    group: 'ヨーロッパ系言語',
+    subjects: [
+      'フランス語', '初級フランス語', 'フランス会話', 'フランス文学', 'フランス文化',
+      'ドイツ語', '初級ドイツ語', 'ドイツ会話', 'ドイツ文学',
+      'スペイン語', '初級スペイン語', 'スペイン会話', 'ラテンアメリカ文化',
+      'イタリア語', 'イタリア語会話', 'イタリア文化',
+      'ロシア語', 'ロシア語文法', 'ロシア文学',
+      'ポルトガル語', 'ブラジル文化', 'ポルトガル語会話',
+      'オランダ語', 'ギリシャ語', '古代ギリシャ語', '現代ギリシャ語', 'ラテン語',
+    ],
+  },
+  {
+    group: 'アジア系言語',
+    subjects: [
+      '中国語', '中国語会話', '中国語読解', '中国文化',
+      '韓国語（朝鮮語）', '韓国語会話', '韓国文化',
+      'アラビア語', 'アラビア語文法', '中東文化',
+      'ヒンディー語', 'タイ語', 'ベトナム語', 'インドネシア語', 'マレー語',
+      'モンゴル語', 'トルコ語', 'ペルシャ語', 'ウルドゥー語', 'タミル語',
+      'ビルマ語（ミャンマー語）', 'ネパール語', 'カンボジア語（クメール語）', 'ラオス語',
+    ],
+  },
+  {
+    group: 'アフリカ系言語',
+    subjects: ['スワヒリ語', 'アムハラ語', 'ズールー語', 'ハウサ語'],
+  },
+  {
+    group: '北欧・東欧系言語',
+    subjects: [
+      'スウェーデン語', 'デンマーク語', 'ノルウェー語', 'フィンランド語', 'アイスランド語',
+      'ポーランド語', 'チェコ語', 'ハンガリー語', 'ルーマニア語',
+      'ブルガリア語', 'セルビア語', 'ウクライナ語',
+    ],
+  },
+  {
+    group: '古典語・特殊言語',
+    subjects: [
+      '古典日本語', '漢文', 'サンスクリット語',
+      '古典ラテン語', '古代ギリシャ語', '聖書ヘブライ語',
+    ],
+  },
+  {
+    group: '日本語教育系',
+    subjects: ['日本語', '日本語会話', '日本語作文', 'ビジネス日本語', '日本語教育学'],
+  },
+  {
+    group: '言語学系科目',
+    subjects: [
+      '言語学', '応用言語学', '社会言語学', '音声学', '音韻論',
+      '統語論', '意味論', '第二言語習得論', '翻訳論', '通訳論',
+    ],
+  },
+  {
+    group: '実践・専門語学',
+    subjects: [
+      '通訳演習', '翻訳演習', '観光英語', '航空英語',
+      '医療通訳', '外交英語', 'ビジネス中国語', '法律英語',
+    ],
+  },
+  {
+    group: 'AI翻訳・多文化系',
+    subjects: [
+      'AI翻訳活用', '多文化コミュニケーション', '異文化理解',
+      'グローバルコミュニケーション', 'オンライン英会話演習',
+    ],
+  },
+] as const
+
+export type SubjectGroup = { readonly group: string; readonly subjects: readonly string[] }
+
+export const CATEGORY_SUBJECT_GROUPS: Record<string, readonly SubjectGroup[]> = {
+  [CourseCategory.GENERAL]: GENERAL_SUBJECT_GROUPS,
+  [CourseCategory.LANGUAGE]: LANGUAGE_SUBJECT_GROUPS,
+}
+
 export const CATEGORY_SUBJECTS: Record<string, readonly string[]> = {
   [CourseCategory.GENERAL]: GENERAL_SUBJECT_GROUPS.flatMap((g) => g.subjects),
+  [CourseCategory.LANGUAGE]: LANGUAGE_SUBJECT_GROUPS.flatMap((g) => g.subjects),
 } as const
 
 export const DAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'] as const

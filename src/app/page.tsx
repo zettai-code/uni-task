@@ -81,6 +81,7 @@ export default function DashboardPage() {
         onStatusChange={updateStatus}
         onEdit={handleEdit}
         onDelete={setDeleteTargetId}
+        onDueDateChange={(id, dueDate) => updateAssignment(id, { dueDate })}
       />
 
       <AssignmentForm

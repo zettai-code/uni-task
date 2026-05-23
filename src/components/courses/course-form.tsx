@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
-import { CATEGORY_CONFIG, CATEGORY_SUBJECTS, GENERAL_SUBJECT_GROUPS, COURSE_COLORS, DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
+import { CATEGORY_CONFIG, CATEGORY_SUBJECT_GROUPS, COURSE_COLORS, DAY_LABELS, PERIOD_LABELS } from '@/lib/constants'
 import { CourseCategory } from '@/types/common'
 import type { CourseCategoryType } from '@/types/common'
 import type { Course } from '@/types/course'
@@ -89,7 +89,7 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
           }}
           error={errors.category}
         />
-        {category === 'general' && (
+        {CATEGORY_SUBJECT_GROUPS[category] && (
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">科目</label>
             <select
@@ -100,7 +100,7 @@ export function CourseForm({ isOpen, onClose, onSubmit, editTarget }: CourseForm
               onChange={(e) => setSubject(e.target.value)}
             >
               <option value="">科目を選択</option>
-              {GENERAL_SUBJECT_GROUPS.map((group) => (
+              {CATEGORY_SUBJECT_GROUPS[category].map((group) => (
                 <optgroup key={group.group} label={group.group}>
                   {group.subjects.map((s) => (
                     <option key={s} value={s}>{s}</option>

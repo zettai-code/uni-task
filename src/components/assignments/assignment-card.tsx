@@ -1,8 +1,9 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { StatusBadge } from './status-badge'
 import { Button } from '@/components/ui/button'
-import { formatDate, getDaysUntilDue, getUrgencyLevel } from '@/lib/date-utils'
+import { formatDate, formatDateForInput, getDaysUntilDue, getUrgencyLevel } from '@/lib/date-utils'
 import { AssignmentStatus } from '@/types/common'
 import type { Assignment } from '@/types/assignment'
 import type { Course } from '@/types/course'
@@ -14,6 +15,7 @@ interface AssignmentCardProps {
   readonly onStatusChange: (status: AssignmentStatusType) => void
   readonly onEdit: () => void
   readonly onDelete: () => void
+  readonly onDueDateChange: (dueDate: string) => void
 }
 
 const urgencyStyles = {
@@ -29,7 +31,12 @@ export function AssignmentCard({
   onStatusChange,
   onEdit,
   onDelete,
+  onDueDateChange,
 }: AssignmentCardProps) {
+  const [isEditingDate, setIsEditingDate] = useState(false)
+  const [editDate, setEditDate] = useState('')
+  const dateInputRef = useRef<HTMLInputElement>(null)
+
   const daysUntil = getDaysUntilDue(assignment.dueDate)
   const urgency = assignment.status === AssignmentStatus.COMPLETED ? 'normal' : getUrgencyLevel(daysUntil)
 
@@ -48,6 +55,23 @@ export function AssignmentCard({
       : assignment.status === AssignmentStatus.IN_PROGRESS
         ? [AssignmentStatus.COMPLETED, AssignmentStatus.NOT_STARTED]
         : [AssignmentStatus.NOT_STARTED]
+
+  const handleOpenDateEdit = () => {
+    setEditDate(formatDateForInput(assignment.dueDate))
+    setIsEditingDate(true)
+    setTimeout(() => dateInputRef.current?.showPicker?.(), 50)
+  }
+
+  const handleDateSave = () => {
+    if (editDate) {
+      onDueDateChange(editDate)
+    }
+    setIsEditingDate(false)
+  }
+
+  const handleDateCancel = () => {
+    setIsEditingDate(false)
+  }
 
   return (
     <div className={`rounded-lg border border-l-4 bg-white p-4 shadow-sm transition-shadow hover:shadow-md ${urgencyStyles[urgency]}`}>
@@ -79,26 +103,54 @@ export function AssignmentCard({
               {daysLabel}
             </span>
           </div>
+          {isEditingDate && (
+            <div className="mt-3 flex items-center gap-2">
+              <input
+                ref={dateInputRef}
+                type="date"
+                className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+              />
+              <Button size="sm" onClick={handleDateSave}>保存</Button>
+              <Button variant="secondary" size="sm" onClick={handleDateCancel}>取消</Button>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-1 ml-4">
-          {nextStatuses.map((status) => (
+        <div className="flex flex-col items-end gap-1 ml-4">
+          <div className="flex items-center gap-1">
             <Button
-              key={status}
               variant="ghost"
               size="sm"
-              onClick={() => onStatusChange(status)}
-              title={`ステータスを変更`}
+              onClick={handleOpenDateEdit}
+              title="締切日を設定・変更"
             >
-              {status === AssignmentStatus.COMPLETED ? '✓' :
-               status === AssignmentStatus.IN_PROGRESS ? '▶' : '↩'}
+              📅
             </Button>
-          ))}
-          <Button variant="ghost" size="sm" onClick={onEdit}>
-            ✏️
-          </Button>
-          <Button variant="ghost" size="sm" onClick={onDelete}>
-            🗑️
-          </Button>
+            <Button variant="ghost" size="sm" onClick={onEdit} title="編集">
+              ✏️
+            </Button>
+            <Button variant="ghost" size="sm" onClick={onDelete} title="削除">
+              🗑️
+            </Button>
+          </div>
+          <div className="flex items-center gap-1">
+            {nextStatuses.map((status) => (
+              <Button
+                key={status}
+                variant="ghost"
+                size="sm"
+                onClick={() => onStatusChange(status)}
+                title={
+                  status === AssignmentStatus.COMPLETED ? '完了にする' :
+                  status === AssignmentStatus.IN_PROGRESS ? '進行中にする' : '未着手に戻す'
+                }
+              >
+                {status === AssignmentStatus.COMPLETED ? '✓' :
+                 status === AssignmentStatus.IN_PROGRESS ? '▶' : '↩'}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
