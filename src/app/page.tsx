@@ -99,6 +99,8 @@ export default function DashboardPage() {
         onFilterChange={setFilters}
       />
 
+      <h2 className="text-lg font-bold text-blue-600">課題総一覧</h2>
+
       <AssignmentList
         assignments={filtered}
         courses={courses}
