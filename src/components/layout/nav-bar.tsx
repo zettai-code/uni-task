@@ -14,6 +14,7 @@ const navItems = [
   { href: '/', label: 'ダッシュボード', icon: '📋' },
   { href: '/calendar', label: 'カレンダー', icon: '📅' },
   { href: '/courses', label: '授業管理', icon: '📚' },
+  { href: '/todos', label: 'ToDoリスト', icon: '✅' },
 ] as const
 
 export function NavBar({ username, onLogout }: NavBarProps) {
