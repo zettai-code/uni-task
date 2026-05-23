@@ -16,6 +16,7 @@ interface CalendarGridProps {
   readonly onAddAssignment: (dateStr: string) => void
   readonly onEditAssignment: (assignment: Assignment) => void
   readonly onDeleteAssignment: (id: AssignmentId) => void
+  readonly onMonthChange?: (year: number, month: number) => void
 }
 
 export function CalendarGrid({
@@ -24,6 +25,7 @@ export function CalendarGrid({
   onAddAssignment,
   onEditAssignment,
   onDeleteAssignment,
+  onMonthChange,
 }: CalendarGridProps) {
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
@@ -35,28 +37,27 @@ export function CalendarGrid({
 
   const prevMonth = () => {
     setSelectedDay(null)
-    if (month === 0) {
-      setYear(year - 1)
-      setMonth(11)
-    } else {
-      setMonth(month - 1)
-    }
+    const newMonth = month === 0 ? 11 : month - 1
+    const newYear = month === 0 ? year - 1 : year
+    setYear(newYear)
+    setMonth(newMonth)
+    onMonthChange?.(newYear, newMonth)
   }
 
   const nextMonth = () => {
     setSelectedDay(null)
-    if (month === 11) {
-      setYear(year + 1)
-      setMonth(0)
-    } else {
-      setMonth(month + 1)
-    }
+    const newMonth = month === 11 ? 0 : month + 1
+    const newYear = month === 11 ? year + 1 : year
+    setYear(newYear)
+    setMonth(newMonth)
+    onMonthChange?.(newYear, newMonth)
   }
 
   const goToToday = () => {
     setSelectedDay(null)
     setYear(today.getFullYear())
     setMonth(today.getMonth())
+    onMonthChange?.(today.getFullYear(), today.getMonth())
   }
 
   const getAssignmentsForDate = (day: number) => {
