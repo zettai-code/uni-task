@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UniTask - 大学生向け課題管理アプリ
 
-## Getting Started
+大学生活をもっとスムーズに。授業・課題・スケジュールを一元管理できるWebアプリです。
 
-First, run the development server:
+## 大学自己管理アプリを作る上でこだわったポイント
+
+### 1. 課題タスクの枠線を統一してAI感をなくした
+
+ダッシュボードの課題総一覧に表示される課題カードの左側の枠線は、もともと緊急度によって赤・黄・青と色分けされていましたが、これがいかにもAIが自動生成したような見た目になってしまっていました。そこで、すべての課題カードの枠線を灰色に統一し、シンプルで自然なデザインに仕上げました。
+
+### 2. カレンダー下部にその月の未完了タスクをまとめて表示
+
+カレンダーページでは、月表示のカレンダーの下に「その月の未完了課題」を表形式でまとめて表示するようにしました。授業名・課題名・締切日・残り日数・ステータスが一目でわかる表になっており、月を切り替えるとその月の未完了課題に自動で更新されます。カレンダー上の点だけでは把握しきれない情報を、視覚的にわかりやすく補完しています。
+
+### 3. 授業管理ページの授業アイコンをイメージに合わせて設定
+
+授業管理ページでは、以前は色付きの四角いアイコンがすべての授業に表示されていましたが、色が被ると区別がつきにくい問題がありました。そこで、科目ごとにその授業をイメージできる絵文字アイコンを設定しました。例えば、数学は➗、物理は⚛️、英語は🇬🇧、サッカーは⚽、心理学は🧠など、パッと見ただけで何の科目かすぐに判断できるようにしました。
+
+### 4. ToDoリストを締切が近い順に並べて一目でわかるように
+
+ToDoリストページでは、未完了の課題を上から順に締切期限が近い順で自動ソートして表示しています。さらに、締切まで2週間以内の課題は黄色文字、1週間以内の課題は赤文字で「あと X日 X時間 X分」とリアルタイムカウントダウンを表示。ページを開いた瞬間に、どの課題が最も急ぎなのかがパッとわかるようにしました。
+
+### 5. タイムテーブルの時限に授業時間を色を変えて表示
+
+タイムテーブルページでは、1限〜6限の各時限の下に実際の授業時間を赤文字で表示しました（例: 1限は「8:50〜10:30」、2限は「10:45〜12:25」など）。時限番号だけでは実際の時間がわからないという問題を解決し、赤文字にすることで通常のテキストと区別しやすくしています。
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 16 (App Router) + TypeScript
+- **スタイリング**: Tailwind CSS
+- **バリデーション**: Zod
+- **データ保存**: localStorage
+- **認証**: Web Crypto API (SHA-256)
+
+## セットアップ
 
 ```bash
+# インストール
+npm install
+
+# 開発サーバー起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで http://localhost:3000 を開いてください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ページ構成
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| ページ | パス | 機能 |
+|--------|------|------|
+| ダッシュボード | `/` | 課題一覧・進捗率・フィルタリング |
+| カレンダー | `/calendar` | 月表示カレンダー・未完了課題表 |
+| 授業管理 | `/courses` | 授業のCRUD・科目アイコン |
+| ToDoリスト | `/todos` | 未完了課題の締切順一覧 |
+| タイムテーブル | `/timetable` | 時間割グリッド表示 |
