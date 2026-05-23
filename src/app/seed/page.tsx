@@ -16,11 +16,11 @@ interface SeedItem {
 
 const SEED_ITEMS: readonly SeedItem[] = [
   {
-    courseName: '合宿ゼミ',
-    subject: '合宿ゼミ',
-    category: CourseCategory.SEMINAR,
+    courseName: 'サッカー',
+    subject: 'サッカー',
+    category: CourseCategory.SPORTS,
     color: '#10B981',
-    assignmentTitle: '宿泊型研究１',
+    assignmentTitle: 'サッカーの課題レポート',
   },
 ]
 
