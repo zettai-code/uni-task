@@ -12,7 +12,18 @@ import { AssignmentStatus } from '@/types/common'
 import type { Course } from '@/types/course'
 import type { CourseId, CourseCategoryType } from '@/types/common'
 
-const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0] as const
+const WEEKDAYS = [1, 2, 3, 4, 5, 6] as const
+
+const PERIODS = [1, 2, 3, 4, 5, 6] as const
+
+const PERIOD_TIMES = [
+  '8:50~10:30',
+  '10:45~12:25',
+  '13:25~15:05',
+  '15:20~17:00',
+  '17:10~18:50',
+  '18:55~20:35',
+] as const
 
 interface SelectedCell {
   readonly day: number
@@ -110,8 +121,8 @@ export default function TimetablePage() {
               {WEEKDAYS.map((day) => (
                 <th
                   key={day}
-                  className={`border-b border-r last:border-r-0 bg-gray-50 px-2 py-3 text-sm font-medium ${
-                    day === 0 ? 'text-red-500' : day === 6 ? 'text-blue-500' : 'text-gray-700'
+                  className={`border-b border-r last:border-r-0 bg-gray-50 px-2 py-3 text-sm font-medium w-[14%] ${
+                    day === 6 ? 'text-blue-500' : 'text-gray-700'
                   }`}
                 >
                   {DAY_LABELS[day]}
@@ -120,12 +131,11 @@ export default function TimetablePage() {
             </tr>
           </thead>
           <tbody>
-            {PERIOD_LABELS.map((periodLabel, periodIndex) => {
-              const period = periodIndex + 1
-              return (
+            {PERIODS.map((period, periodIndex) => (
                 <tr key={period}>
-                  <td className="border-b border-r bg-gray-50 px-2 py-1 text-center text-xs font-medium text-gray-500">
-                    {periodLabel}
+                  <td className="border-b border-r bg-gray-50 px-2 py-1 text-center">
+                    <div className="text-xs font-medium text-gray-500">{PERIOD_LABELS[periodIndex]}</div>
+                    <div className="text-[10px] font-medium text-red-500 mt-0.5">{PERIOD_TIMES[periodIndex]}</div>
                   </td>
                   {WEEKDAYS.map((day) => {
                     const course = grid.get(`${day}-${period}`)
@@ -188,8 +198,7 @@ export default function TimetablePage() {
                     )
                   })}
                 </tr>
-              )
-            })}
+            ))}
           </tbody>
         </table>
       </div>
