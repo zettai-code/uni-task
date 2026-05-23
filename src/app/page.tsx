@@ -35,6 +35,7 @@ export default function DashboardPage() {
     courseId: null,
     status: null,
     category: null,
+    subject: null,
     searchQuery: '',
   })
   const filtered = useFilteredAssignments(assignments, filters, courses)

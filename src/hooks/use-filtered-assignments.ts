@@ -23,6 +23,12 @@ export function useFilteredAssignments(
           return false
         }
       }
+      if (filters.subject) {
+        const course = courses.find((c) => c.id === assignment.courseId)
+        if (!course || course.subject !== filters.subject) {
+          return false
+        }
+      }
       if (
         filters.searchQuery &&
         !assignment.title.toLowerCase().includes(filters.searchQuery.toLowerCase())

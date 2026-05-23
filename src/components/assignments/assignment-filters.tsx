@@ -1,9 +1,10 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Select } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { AssignmentStatus, CourseCategory } from '@/types/common'
-import { STATUS_CONFIG, CATEGORY_CONFIG } from '@/lib/constants'
+import { STATUS_CONFIG, CATEGORY_CONFIG, CATEGORY_SUBJECT_GROUPS } from '@/lib/constants'
 import type { AssignmentFilters } from '@/types/assignment'
 import type { Course } from '@/types/course'
 import type { AssignmentStatusType, CourseCategoryType, CourseId } from '@/types/common'
@@ -30,6 +31,18 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
     label: CATEGORY_CONFIG[c].label,
   }))
 
+  const subjectGroups = useMemo(() => {
+    if (filters.category) {
+      return CATEGORY_SUBJECT_GROUPS[filters.category] ?? []
+    }
+    const subjects = new Set<string>()
+    for (const course of courses) {
+      if (course.subject) subjects.add(course.subject)
+    }
+    const sorted = Array.from(subjects).sort()
+    return sorted.length > 0 ? [{ group: '登録済み科目', subjects: sorted }] : []
+  }, [filters.category, courses])
+
   return (
     <div className="flex flex-wrap items-end gap-4">
       <div className="w-48">
@@ -42,9 +55,34 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
             onFilterChange({
               ...filters,
               category: e.target.value ? (e.target.value as CourseCategoryType) : null,
+              subject: null,
             })
           }
         />
+      </div>
+      <div className="w-48">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">科目</label>
+          <select
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={filters.subject ?? ''}
+            onChange={(e) =>
+              onFilterChange({
+                ...filters,
+                subject: e.target.value || null,
+              })
+            }
+          >
+            <option value="">すべて</option>
+            {subjectGroups.map((group) => (
+              <optgroup key={group.group} label={group.group}>
+                {group.subjects.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="w-48">
         <Select

@@ -23,5 +23,6 @@ export interface AssignmentFilters {
   readonly courseId: CourseId | null
   readonly status: AssignmentStatusType | null
   readonly category: CourseCategoryType | null
+  readonly subject: string | null
   readonly searchQuery: string
 }
