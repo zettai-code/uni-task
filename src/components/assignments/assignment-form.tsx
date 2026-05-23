@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useState, useMemo, type FormEvent } from 'react'
 import { createAssignmentSchema } from '@/schemas/assignment-schema'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
+import { ASSIGNMENT_TEMPLATES } from '@/lib/constants'
 import type { Course } from '@/types/course'
 import type { Assignment } from '@/types/assignment'
 import type { CourseId } from '@/types/common'
@@ -24,7 +25,26 @@ export function AssignmentForm({ isOpen, onClose, onSubmit, courses, editTarget 
   const [title, setTitle] = useState(editTarget?.title ?? '')
   const [description, setDescription] = useState(editTarget?.description ?? '')
   const [dueDate, setDueDate] = useState(editTarget ? formatDateForInput(editTarget.dueDate) : '')
+  const [useCustomTitle, setUseCustomTitle] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const selectedCourse = useMemo(
+    () => courses.find((c) => c.id === courseId),
+    [courses, courseId]
+  )
+
+  const templates = useMemo(() => {
+    if (!selectedCourse) return []
+    const base = ASSIGNMENT_TEMPLATES[selectedCourse.category] ?? []
+    const courseName = selectedCourse.name
+    return base.map((t) => `${courseName} - ${t}`)
+  }, [selectedCourse])
+
+  const handleCourseChange = (newCourseId: string) => {
+    setCourseId(newCourseId as CourseId)
+    setTitle('')
+    setUseCustomTitle(false)
+  }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -60,16 +80,81 @@ export function AssignmentForm({ isOpen, onClose, onSubmit, courses, editTarget 
           options={courseOptions}
           placeholder="授業を選択"
           value={courseId}
-          onChange={(e) => setCourseId(e.target.value as CourseId)}
+          onChange={(e) => handleCourseChange(e.target.value)}
           error={errors.courseId}
         />
-        <Input
-          label="課題名"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          error={errors.title}
-          placeholder="例: レポート第3回"
-        />
+
+        {selectedCourse && !editTarget && (
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-medium text-red-500">記入は任意</p>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">課題名</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setUseCustomTitle(!useCustomTitle)
+                  setTitle('')
+                }}
+                className="text-xs text-blue-600 hover:text-blue-700"
+              >
+                {useCustomTitle ? '候補から選ぶ' : '自分で入力する'}
+              </button>
+            </div>
+
+            {useCustomTitle ? (
+              <input
+                className={`rounded-lg border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.title ? 'border-red-500' : 'border-gray-300'
+                }`}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="課題名を入力"
+              />
+            ) : (
+              <select
+                className={`rounded-lg border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.title ? 'border-red-500' : 'border-gray-300'
+                }`}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              >
+                <option value="">課題を選択</option>
+                {templates.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            )}
+            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+          </div>
+        )}
+
+        {editTarget && (
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-medium text-red-500">記入は任意</p>
+            <Input
+              label="課題名"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              error={errors.title}
+              placeholder="例: レポート第3回"
+            />
+          </div>
+        )}
+
+        {!selectedCourse && !editTarget && (
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-medium text-red-500">記入は任意</p>
+            <Input
+              label="課題名"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              error={errors.title}
+              placeholder="授業を先に選択してください"
+              disabled
+            />
+          </div>
+        )}
+
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">説明</label>
           <textarea
@@ -81,13 +166,16 @@ export function AssignmentForm({ isOpen, onClose, onSubmit, courses, editTarget 
           />
           {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
         </div>
-        <Input
-          label="締切日"
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          error={errors.dueDate}
-        />
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-medium text-red-500">記入は任意</p>
+          <Input
+            label="締切日"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            error={errors.dueDate}
+          />
+        </div>
         <div className="flex justify-end gap-3 pt-2">
           <Button variant="secondary" type="button" onClick={onClose}>
             キャンセル
