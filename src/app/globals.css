@@ -5,3 +5,45 @@ body {
   color: #171717;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes celebration-pop {
+  0% {
+    transform: scale(0) rotate(-10deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.3) rotate(5deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1) rotate(-3deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+  85% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes celebration-bg {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-celebration-pop {
+  animation: celebration-pop 2s ease-in-out forwards;
+}
+
+.animate-celebration-bg {
+  animation: celebration-bg 2.5s ease-in-out forwards;
+}

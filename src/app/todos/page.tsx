@@ -5,6 +5,7 @@ import { useAuth } from '@/stores/use-auth'
 import { useCourses } from '@/stores/use-courses'
 import { useAssignments } from '@/stores/use-assignments'
 import { StatusBadge } from '@/components/assignments/status-badge'
+import { Confetti } from '@/components/ui/confetti'
 import { formatDate, getDaysUntilDue } from '@/lib/date-utils'
 import { AssignmentStatus } from '@/types/common'
 
@@ -12,6 +13,12 @@ export default function TodosPage() {
   const { userId } = useAuth()
   const { courses } = useCourses(userId)
   const { assignments, updateStatus } = useAssignments(userId)
+  const [showConfetti, setShowConfetti] = useState(false)
+
+  const handleComplete = (id: typeof assignments[number]['id']) => {
+    updateStatus(id, AssignmentStatus.COMPLETED)
+    setShowConfetti(true)
+  }
 
   const incompleteAssignments = useMemo(() => {
     return assignments
@@ -73,7 +80,7 @@ export default function TodosPage() {
                 <input
                   type="checkbox"
                   checked={false}
-                  onChange={() => updateStatus(assignment.id, AssignmentStatus.COMPLETED)}
+                  onChange={() => handleComplete(assignment.id)}
                   className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 shrink-0 cursor-pointer"
                   title="完了にする"
                 />
@@ -120,6 +127,7 @@ export default function TodosPage() {
           })}
         </div>
       )}
+      {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
     </div>
   )
 }

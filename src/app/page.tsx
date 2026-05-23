@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useAuth } from '@/stores/use-auth'
 import { useCourses } from '@/stores/use-courses'
 import { useAssignments } from '@/stores/use-assignments'
@@ -11,11 +11,12 @@ import { AssignmentFiltersBar } from '@/components/assignments/assignment-filter
 import { AssignmentForm } from '@/components/assignments/assignment-form'
 import { ReminderToast } from '@/components/reminders/reminder-toast'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { Confetti } from '@/components/ui/confetti'
 import { Button } from '@/components/ui/button'
 import { AssignmentStatus } from '@/types/common'
 import type { AssignmentFilters } from '@/types/assignment'
 import type { Assignment } from '@/types/assignment'
-import type { AssignmentId } from '@/types/common'
+import type { AssignmentId, AssignmentStatusType } from '@/types/common'
 
 export default function DashboardPage() {
   const { userId } = useAuth()
@@ -30,6 +31,18 @@ export default function DashboardPage() {
     const completed = assignments.filter((a) => a.status === AssignmentStatus.COMPLETED).length
     return { total, completed, percent: Math.round((completed / total) * 100) }
   }, [assignments])
+
+  const [showConfetti, setShowConfetti] = useState(false)
+
+  const handleStatusChange = useCallback(
+    (id: AssignmentId, status: AssignmentStatusType) => {
+      updateStatus(id, status)
+      if (status === AssignmentStatus.COMPLETED) {
+        setShowConfetti(true)
+      }
+    },
+    [updateStatus]
+  )
 
   const [filters, setFilters] = useState<AssignmentFilters>({
     courseId: null,
@@ -104,7 +117,7 @@ export default function DashboardPage() {
       <AssignmentList
         assignments={filtered}
         courses={courses}
-        onStatusChange={updateStatus}
+        onStatusChange={handleStatusChange}
         onEdit={handleEdit}
         onDelete={setDeleteTargetId}
         onDueDateChange={(id, dueDate) => updateAssignment(id, { dueDate })}
@@ -127,6 +140,7 @@ export default function DashboardPage() {
       />
 
       <ReminderToast reminders={reminders} courses={courses} />
+      {showConfetti && <Confetti onDone={() => setShowConfetti(false)} />}
     </div>
   )
 }
