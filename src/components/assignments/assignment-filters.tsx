@@ -32,16 +32,9 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
   }))
 
   const subjectGroups = useMemo(() => {
-    if (filters.category) {
-      return CATEGORY_SUBJECT_GROUPS[filters.category] ?? []
-    }
-    const subjects = new Set<string>()
-    for (const course of courses) {
-      if (course.subject) subjects.add(course.subject)
-    }
-    const sorted = Array.from(subjects).sort()
-    return sorted.length > 0 ? [{ group: '登録済み科目', subjects: sorted }] : []
-  }, [filters.category, courses])
+    if (!filters.category) return []
+    return CATEGORY_SUBJECT_GROUPS[filters.category] ?? []
+  }, [filters.category])
 
   return (
     <div className="flex flex-wrap items-end gap-4">
@@ -73,7 +66,7 @@ export function AssignmentFiltersBar({ filters, courses, onFilterChange }: Assig
               })
             }
           >
-            <option value="">すべて</option>
+            <option value="">{filters.category ? 'すべて' : '科目区分を選択してください'}</option>
             {subjectGroups.map((group) => (
               <optgroup key={group.group} label={group.group}>
                 {group.subjects.map((s) => (

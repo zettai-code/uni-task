@@ -1141,6 +1141,14 @@ export const ONLINE_PBL_SUBJECT_GROUPS = [
       '社会連携プロジェクト', 'イノベーション演習', 'アクティブラーニング演習',
     ],
   },
+  {
+    group: 'PBL・アクティブラーニング型',
+    subjects: [
+      'PBL（Project Based Learning）', '企業連携プロジェクト', '地域課題解決',
+      'チーム開発', 'オンラインディスカッション', 'アクティブラーニング',
+      'ハッカソン型授業', 'SDGsプロジェクト', 'ケース分析型授業',
+    ],
+  },
 ] as const
 
 export type SubjectGroup = { readonly group: string; readonly subjects: readonly string[] }
